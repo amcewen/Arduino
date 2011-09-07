@@ -112,7 +112,7 @@ void loop()
 void connectToServer() {
   // attempt to connect, and wait a millisecond:
   Serial.println("connecting to server...");
-  if (client.connect(serverName, 80)) {
+  if (client.connect(serverName, 80) > 0) {
     Serial.println("making HTTP request...");
   // make HTTP GET request to twitter:
     client.println("GET /1/statuses/user_timeline.xml?screen_name=arduino&count=1 HTTP/1.1");

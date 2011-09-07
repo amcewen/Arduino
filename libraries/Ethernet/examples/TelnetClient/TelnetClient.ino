@@ -45,7 +45,7 @@ void setup() {
   Serial.println("connecting...");
 
   // if you get a connection, report back via serial:
-  if (client.connect(server, 10002)) {
+  if (client.connect(server, 10002) > 0) {
     Serial.println("connected");
   } 
   else {

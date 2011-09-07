@@ -40,7 +40,7 @@ void setup() {
   Serial.println("connecting...");
 
   // if you get a connection, report back via serial:
-  if (client.connect(server, 80)) {
+  if (client.connect(server, 80) > 0) {
     Serial.println("connected");
     // Make a HTTP request:
     client.println("GET /search?q=arduino HTTP/1.0");

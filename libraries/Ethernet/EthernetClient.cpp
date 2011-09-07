@@ -56,14 +56,14 @@ int EthernetClient::connect(IPAddress ip, uint16_t port) {
 
   if (!::connect(_sock, rawIPAddress(ip), port)) {
     _sock = MAX_SOCK_NUM;
-    return 0;
+    return ErrConnectionFailed;
   }
 
   while (status() != SnSR::ESTABLISHED) {
     delay(1);
     if (status() == SnSR::CLOSED) {
       _sock = MAX_SOCK_NUM;
-      return 0;
+      return ErrTimedOut;
     }
   }
 

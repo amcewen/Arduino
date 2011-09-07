@@ -5,6 +5,7 @@
 #include "w5100.h"
 #include "EthernetUdp.h"
 #include "util.h"
+#include <Client.h> // For the error constants
 
 #include "Dns.h"
 #include <string.h>
@@ -43,10 +44,11 @@
 
 // Possible return codes from ProcessResponse
 #define SUCCESS          1
-#define TIMED_OUT        -1
-#define INVALID_SERVER   -2
-#define TRUNCATED        -3
-#define INVALID_RESPONSE -4
+#define TIMED_OUT        ErrTimedOut
+#define INVALID_SERVER   ErrNoDNSServer
+#define TRUNCATED        ErrDNSLookupFailed
+#define INVALID_RESPONSE ErrDNSLookupFailed
+#define HOST_NOT_FOUND   ErrHostNotFound
 
 void DNSClient::begin(const IPAddress& aDNSServer)
 {

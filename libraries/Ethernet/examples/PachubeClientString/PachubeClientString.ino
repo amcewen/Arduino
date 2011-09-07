@@ -90,7 +90,7 @@ void loop() {
 // this method makes a HTTP connection to the server:
 void sendData(String thisData) {
   // if there's a successful connection:
-  if (client.connect("www.pachube.com", 80)) {
+  if (client.connect("www.pachube.com", 80) > 0) {
     Serial.println("connecting...");
     // send the HTTP PUT request. 
     // fill in your feed address here:
