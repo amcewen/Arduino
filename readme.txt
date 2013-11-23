@@ -8,11 +8,18 @@ IDE can be downloaded for free.
 For more information, see the website at: http://www.arduino.cc/
 or the forums at: http://arduino.cc/forum/
 
-To report a bug in the software, go to:
-http://code.google.com/p/arduino/issues/list
+To report a *bug* in the software or to request *a simple enhancement* go to:
+http://github.com/arduino/Arduino/issues
 
-For other suggestions, use the forum:
-http://arduino.cc/forum/index.php/board,21.0.html
+More complex requests and technical discussion should go on the Arduino Developers
+mailing list:
+https://groups.google.com/a/arduino.cc/forum/#!forum/developers
+
+If you're interested in modifying or extending the Arduino software, we strongly 
+suggest discussing your ideas on the Developers mailing list *before* starting
+to work on them. That way you can coordinate with the Arduino Team and others,
+giving your work a higher chance of being integrated into the official release
+https://groups.google.com/a/arduino.cc/forum/#!forum/developers
 
 INSTALLATION
 Detailed instructions are in reference/Guide_Windows.html and
@@ -23,7 +30,7 @@ CREDITS
 Arduino is an open source project, supported by many.
 
 The Arduino team is composed of Massimo Banzi, David Cuartielles, Tom Igoe,
-Gianluca Martino, and David A. Mellis.
+Gianluca Martino, Daniela Antonietti, and David A. Mellis.
 
 Arduino uses the GNU avr-gcc toolchain, avrdude, avr-libc, and code from
 Processing and Wiring.

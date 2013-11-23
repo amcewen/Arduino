@@ -430,6 +430,8 @@ public class Editor extends JFrame implements RunnerListener {
     textarea.setEditable(!external);
     saveMenuItem.setEnabled(!external);
     saveAsMenuItem.setEnabled(!external);
+    
+    textarea.setDisplayLineNumbers(Preferences.getBoolean("editor.linenumbers"));
 
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
@@ -627,7 +629,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     if (importMenu == null) {
       importMenu = new JMenu(_("Import Library..."));
-      base.rebuildImportMenu(importMenu);
+      base.rebuildImportMenu(importMenu, this);
     }
     sketchMenu.add(importMenu);
 
@@ -680,7 +682,7 @@ public class Editor extends JFrame implements RunnerListener {
     
     if (boardsMenu == null) {
       boardsMenu = new JMenu(_("Board"));
-      base.rebuildBoardsMenu(boardsMenu);
+      base.rebuildBoardsMenu(boardsMenu, this);
     }
     menu.add(boardsMenu);
     
@@ -1073,9 +1075,10 @@ public class Editor extends JFrame implements RunnerListener {
     item = newJMenuItemShift(_("Find in Reference"), 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (textarea.isSelectionActive()) {
-            handleFindReference();
-          }
+//          if (textarea.isSelectionActive()) {
+//            handleFindReference();
+//          }
+        	handleFindReference();
         }
       });
     menu.add(item);
@@ -1808,25 +1811,58 @@ public class Editor extends JFrame implements RunnerListener {
     stopCompoundEdit();
   }
 
+	protected String getCurrentKeyword() {
+		String text = "";
+		if (textarea.getSelectedText() != null)
+			text = textarea.getSelectedText().trim();
 
-  protected void handleFindReference() {
-    String text = textarea.getSelectedText().trim();
+		try {
+			int current = textarea.getCaretPosition();
+			int startOffset = 0;
+			int endIndex = current;
+			String tmp = textarea.getDocument().getText(current, 1);
+			// TODO probably a regexp that matches Arduino lang special chars
+			// already exists.
+			String regexp = "[\\s\\n();\\\\.!='\\[\\]{}]";
 
-    if (text.length() == 0) {
-      statusNotice(_("First select a word to find in the reference."));
+			while (!tmp.matches(regexp)) {
+				endIndex++;
+				tmp = textarea.getDocument().getText(endIndex, 1);
+			}
+			// For some reason document index start at 2.
+			// if( current - start < 2 ) return;
 
-    } else {
-      String referenceFile = PdeKeywords.getReference(text);
-      //System.out.println("reference file is " + referenceFile);
-      if (referenceFile == null) {
-        statusNotice(
-	  I18n.format(_("No reference available for \"{0}\""), text)
-	);
-      } else {
-        Base.showReference(I18n.format(_("{0}.html"), referenceFile));
-      }
-    }
-  }
+			tmp = "";
+			while (!tmp.matches(regexp)) {
+				startOffset++;
+				if (current - startOffset < 0) {
+					tmp = textarea.getDocument().getText(0, 1);
+					break;
+				} else
+					tmp = textarea.getDocument().getText(current - startOffset, 1);
+			}
+			startOffset--;
+
+			int length = endIndex - current + startOffset;
+			text = textarea.getDocument().getText(current - startOffset, length);
+			
+		} catch (BadLocationException bl) {
+			bl.printStackTrace();
+		} finally {
+			return text;
+		}
+	}
+
+	protected void handleFindReference() {
+		String text = getCurrentKeyword();
+		
+		String referenceFile = PdeKeywords.getReference(text);
+		if (referenceFile == null) {
+			statusNotice(I18n.format(_("No reference available for \"{0}\""), text));
+		} else {
+			Base.showReference(I18n.format(_("{0}.html"), referenceFile));
+		}
+	}
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -2753,16 +2789,15 @@ public class Editor extends JFrame implements RunnerListener {
         copyItem.setEnabled(true);
         discourseItem.setEnabled(true);
 
-        String sel = textarea.getSelectedText().trim();
-        referenceFile = PdeKeywords.getReference(sel);
-        referenceItem.setEnabled(referenceFile != null);
-
       } else {
         cutItem.setEnabled(false);
         copyItem.setEnabled(false);
         discourseItem.setEnabled(false);
-        referenceItem.setEnabled(false);
       }
+      
+      referenceFile = PdeKeywords.getReference(getCurrentKeyword());
+      referenceItem.setEnabled(referenceFile != null);
+      
       super.show(component, x, y);
     }
   }
