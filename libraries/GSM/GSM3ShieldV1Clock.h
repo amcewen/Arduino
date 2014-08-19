@@ -31,40 +31,49 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 The latest version of this library can always be found at
 https://github.com/BlueVia/Official-Arduino
 */
-#ifndef _GSM3SIMPLIFIERFILE_
-#define _GSM3SIMPLIFIERFILE_
+#ifndef _GSM3SHIELDV1CLOCK
+#define _GSM3SHIELDV1CLOCK
 
-// This file simplifies the use of the GSM3 library
-// First we include everything. 
-
-#include <GSM3CircularBuffer.h>
-#include <GSM3MobileCellManagement.h>
-#include <GSM3MobileClientService.h>
-#include <GSM3MobileNetworkRegistry.h>
-#include <GSM3MobileServerService.h>
 #include <GSM3ShieldV1AccessProvider.h>
-#include <GSM3ShieldV1BandManagement.h>
-#include <GSM3ShieldV1ClientProvider.h>
-#include <GSM3ShieldV1DataNetworkProvider.h>
-#include <GSM3ShieldV1ModemVerification.h>
-#include <GSM3ShieldV1PinManagement.h>
-#include <GSM3ShieldV1ScanNetworks.h>
-#include <GSM3SMSService.h>
-#include <GSM3VoiceCallService.h>
-#include <GSM3ShieldV1Clock.h>
+#include <GSM3ShieldV1DirectModemProvider.h>
 
-#define GSM GSM3ShieldV1AccessProvider
-#define GPRS GSM3ShieldV1DataNetworkProvider
-#define GSMClient GSM3MobileClientService
-#define GSMServer GSM3MobileServerService
-#define GSMVoiceCall GSM3VoiceCallService
-#define GSM_SMS GSM3SMSService
+class GSM3ShieldV1Clock
+{
 
-#define GSMPIN GSM3ShieldV1PinManagement
-#define GSMModem GSM3ShieldV1ModemVerification
-#define GSMCell GSM3CellManagement
-#define GSMBand GSM3ShieldV1BandManagement
-#define GSMScanner GSM3ShieldV1ScanNetworks
-#define GSMClock GSM3ShieldV1Clock
+	private:
+		
+		GSM3ShieldV1DirectModemProvider modemAccess;
+		GSM3ShieldV1AccessProvider gsm; // Access provider to GSM/GPRS network
+		
+	public:
+
+		/** Constructor */
+		GSM3ShieldV1Clock();
+	
+		/** Check modem response and restart it
+		 */
+		int begin();
+		
+		/** Obtain time from the modem
+			@return the time, in the form "dd/mm/yy,hh:MM:ss+zz"
+		 */
+		String getTime();
+
+		/** Sets the clock in the modem
+			@param aTime the time to set the clock to, in the same
+			       form as returned by getTime - "dd/mm/yy,hh:MM:ss+zz"
+			@return true if the time was set, else false
+		 */
+		bool setTime(String aTime);
+		
+		/** Sets the clock in the modem from a network time synchronization
+		    message.  (Only works if the network supports it)
+			@param aWaitTime Number of milliseconds to wait for the
+			       time synchronization message
+			@return true if the time was set, else false
+		 */
+		bool setTimeFromNetwork(unsigned long aWaitTime);
+		
+};
 
 #endif
